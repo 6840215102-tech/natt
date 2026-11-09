@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ระบบสั่งอาหารออนไลน์</title>
+<style>
+:root{--navy:#19334a;--orange:#e87528;--bg:#f5f7fa;--line:#e1e7ee;--muted:#64748b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#1f2937;font-family:Tahoma,"Noto Sans Thai",sans-serif}
+header{background:var(--navy);color:#fff;padding:20px max(16px,calc((100% - 1120px)/2))}
+header h1{font-size:23px;margin:0 0 4px}header p{margin:0;color:#dbe7ef;font-size:13px}
+main{max-width:1120px;margin:22px auto;padding:0 16px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+button{border:0;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:700}
+.tab{background:white;border:1px solid var(--line);color:#334155}.tab.active,.primary{background:var(--orange);color:white}
+.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 4px 14px #19334a0a}
+h2{font-size:18px;color:var(--navy);margin:0 0 14px}.muted,.small{color:var(--muted);font-size:12px}
+.notice{background:#fff7ed;color:#9a3412;padding:10px 12px;border-radius:8px;font-size:12px;margin-bottom:14px}
+.menu{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.item{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:7px}
+.emoji{font-size:34px}.item h3{margin:0;font-size:16px}.price{font-weight:800;color:#c65b1c}.item button{margin-top:auto}
+.layout{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
+label{display:block;font-size:13px;font-weight:700;color:#475569;margin:9px 0 5px}
+input,select,textarea{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font:inherit;background:#fff}
+textarea{min-height:65px}.cartline{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.secondary{background:#e8eef6;color:#24384d}.danger{background:#fee2e2;color:#991b1b}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#f8fafc}
+.badge{border-radius:20px;padding:4px 8px;background:#dbeafe;color:#1d4ed8;font-size:11px}.done{background:#dcfce7;color:#166534}.prep{background:#fef3c7;color:#92400e}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric{background:#f8fafc;border:1px solid var(--line);padding:13px;border-radius:10px}.metric b{font-size:24px;display:block;color:var(--navy)}
+.hidden{display:none}
+@media(max-width:760px){.menu{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.menu{grid-template-columns:1fr}}
+</style></head>
+<body>
+<header><h1>ระบบสั่งอาหารออนไลน์</h1><p>Online Food Ordering • ตัวอย่างระบบสำหรับร้านอาหารขนาดเล็ก • ไม่ต้องเข้าสู่ระบบ</p></header>
+<main>
+<div class="notice">ระบบสาธิตสำหรับทดลอง ข้อมูลคำสั่งซื้อเก็บในเบราว์เซอร์เครื่องนี้เท่านั้น ไม่ใช่ระบบรับออเดอร์ออนไลน์ส่วนกลาง และไม่ควรใช้รับชำระเงินจริง</div>
+<div class="tabs">
+<button class="tab active" data-tab="order">เมนูอาหาร / สั่งอาหาร</button><button class="tab" data-tab="orders">รายการคำสั่งซื้อ</button><button class="tab" data-tab="report">รายงานยอดขาย</button>
+</div>
+<section id="order">
+<div class="layout">
+<div class="panel"><h2>เลือกเมนูอาหาร</h2><div class="menu" id="menu"></div></div>
+<div class="panel"><h2>ตะกร้าสินค้า</h2><div id="cart"><p class="muted">ยังไม่มีสินค้าในตะกร้า</p></div><div class="cartline"><b>รวมทั้งสิ้น</b><b id="total">฿0</b></div>
+<h2 style="margin-top:18px">ข้อมูลผู้สั่ง</h2>
+<form id="checkout"><label>ชื่อลูกค้า *</label><input name="customer" required placeholder="ชื่อผู้สั่งอาหาร">
+<label>เบอร์โทรศัพท์ *</label><input name="phone" required placeholder="เบอร์โทรติดต่อ">
+<label>ประเภทการรับอาหาร *</label><select name="method"><option>รับที่ร้าน</option><option>จัดส่ง</option></select>
+<label>ที่อยู่จัดส่ง (กรณีเลือกจัดส่ง)</label><textarea name="address" placeholder="บ้านเลขที่ ถนน ตำบล อำเภอ"></textarea>
+<label>หมายเหตุเพิ่มเติม</label><textarea name="note" placeholder="เช่น ไม่ใส่ผัก / เผ็ดน้อย"></textarea>
+<div class="actions"><button class="primary" type="submit">ยืนยันคำสั่งซื้อ</button><button type="button" class="secondary" id="empty">ล้างตะกร้า</button></div></form>
+</div></div></section>
+<section id="orders" class="panel hidden"><h2>รายการคำสั่งซื้อ</h2><div class="actions" style="margin:0 0 12px"><input id="search" placeholder="ค้นหาเลขที่ / ชื่อลูกค้า" style="max-width:320px"><button class="secondary" id="csv">ส่งออก CSV</button></div>
+<div style="overflow:auto"><table><thead><tr><th>เลขที่</th><th>วันที่/เวลา</th><th>ลูกค้า</th><th>รายการ</th><th>ยอดรวม</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="orderRows"></tbody></table></div></section>
+<section id="report" class="panel hidden"><h2>รายงานยอดขาย</h2><div class="metrics" id="metrics"></div><p id="reportText" class="muted"></p><div class="actions"><button class="secondary" id="print">พิมพ์ / บันทึก PDF</button><button class="danger" id="clear">ล้างข้อมูลทั้งหมด</button></div></section>
+</main>
+<script>
+const MENU=[
+{id:'F01',name:'ข้าวกะเพราไก่',price:60,emoji:'🍛'},{id:'F02',name:'ข้าวผัดหมู',price:55,emoji:'🍚'},
+{id:'F03',name:'ผัดไทยกุ้งสด',price:75,emoji:'🍜'},{id:'F04',name:'ก๋วยเตี๋ยวหมู',price:55,emoji:'🍲'},
+{id:'F05',name:'ไก่ทอด',price:65,emoji:'🍗'},{id:'F06',name:'ชาเย็น',price:30,emoji:'🧋'}
+];
+const KEY='online_food_orders_demo';let cart={};
+const read=()=>JSON.parse(localStorage.getItem(KEY)||'[]'),save=x=>localStorage.setItem(KEY,JSON.stringify(x));
+const money=n=>'฿'+Number(n).toLocaleString('th-TH');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function renderMenu(){document.getElementById('menu').innerHTML=MENU.map(m=>`<div class="item"><div class="emoji">${m.emoji}</div><h3>${m.name}</h3><div class="price">${money(m.price)}</div><button class="primary" onclick="add('${m.id}')">เพิ่มลงตะกร้า</button></div>`).join('');}
+window.add=id=>{cart[id]=(cart[id]||0)+1;renderCart()};
+function renderCart(){let entries=Object.entries(cart).filter(x=>x[1]>0),el=document.getElementById('cart');if(!entries.length){el.innerHTML='<p class="muted">ยังไม่มีสินค้าในตะกร้า</p>';}else{el.innerHTML=entries.map(([id,q])=>{let m=MENU.find(x=>x.id===id);return `<div class="cartline"><span>${m.name} × ${q}</span><span>${money(m.price*q)} <button class="secondary" onclick="removeItem('${id}')">−</button></span></div>`}).join('');}document.getElementById('total').textContent=money(entries.reduce((s,[id,q])=>s+MENU.find(m=>m.id===id).price*q,0));}
+window.removeItem=id=>{cart[id]=(cart[id]||0)-1;if(cart[id]<=0)delete cart[id];renderCart()};
+function renderOrders(){let a=read(),q=(document.getElementById('search')?.value||'').toLowerCase();let f=a.filter(x=>(x.id+x.customer).toLowerCase().includes(q));document.getElementById('orderRows').innerHTML=f.map(x=>`<tr><td>${x.id}</td><td>${x.created}</td><td>${esc(x.customer)}<br><span class="small">${esc(x.method)}</span></td><td>${x.items.map(i=>esc(i.name)+' × '+i.qty).join('<br>')}</td><td>${money(x.total)}</td><td><span class="badge ${x.status==='ส่งมอบแล้ว'?'done':x.status==='กำลังจัดเตรียม'?'prep':''}">${x.status}</span></td><td><button class="secondary" onclick="advance('${x.id}')">เปลี่ยนสถานะ</button></td></tr>`).join('')||'<tr><td colspan="7">ยังไม่มีคำสั่งซื้อ</td></tr>';
+let n=a.length,sales=a.reduce((s,x)=>s+x.total,0),prep=a.filter(x=>x.status==='กำลังจัดเตรียม').length,done=a.filter(x=>x.status==='ส่งมอบแล้ว').length;
+document.getElementById('metrics').innerHTML=[['คำสั่งซื้อ',n],['ยอดขายรวม',money(sales)],['กำลังจัดเตรียม',prep],['ส่งมอบแล้ว',done]].map(x=>`<div class="metric"><b>${x[1]}</b><span>${x[0]}</span></div>`).join('');
+document.getElementById('reportText').textContent=`คำนวณจากคำสั่งซื้อทั้งหมด ${n} รายการ (ข้อมูลตัวอย่างในเบราว์เซอร์นี้)`;
+}
+window.advance=id=>{let a=read(),x=a.find(y=>y.id===id);if(!x)return;x.status=x.status==='รับคำสั่งซื้อแล้ว'?'กำลังจัดเตรียม':x.status==='กำลังจัดเตรียม'?'ส่งมอบแล้ว':'รับคำสั่งซื้อแล้ว';save(a);renderOrders()};
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));['order','orders','report'].forEach(id=>document.getElementById(id).classList.toggle('hidden',id!==b.dataset.tab));renderOrders()});
+document.getElementById('checkout').onsubmit=e=>{e.preventDefault();let entries=Object.entries(cart).filter(x=>x[1]>0);if(!entries.length){alert('กรุณาเลือกอาหารก่อนยืนยันคำสั่งซื้อ');return;}let f=new FormData(e.target),items=entries.map(([id,qty])=>{let m=MENU.find(x=>x.id===id);return {menu_id:id,name:m.name,price:m.price,qty}}),total=items.reduce((s,x)=>s+x.price*x.qty,0);let a=read();a.unshift({id:'FD'+Date.now().toString().slice(-7),created:new Date().toLocaleString('th-TH'),customer:f.get('customer'),phone:f.get('phone'),method:f.get('method'),address:f.get('address'),note:f.get('note'),items,total,status:'รับคำสั่งซื้อแล้ว'});save(a);cart={};renderCart();e.target.reset();alert('รับคำสั่งซื้อเรียบร้อย');document.querySelector('[data-tab="orders"]').click()};
+document.getElementById('empty').onclick=()=>{cart={};renderCart()};document.getElementById('search').oninput=renderOrders;
+document.getElementById('csv').onclick=()=>{let a=read(),head=['order_id','created','customer','phone','method','address','items','total','status'];let rows=a.map(x=>[x.id,x.created,x.customer,x.phone,x.method,x.address,x.items.map(i=>`${i.name} x ${i.qty}`).join('; '),x.total,x.status]);let csv=[head,...rows].map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');let blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a1=document.createElement('a');a1.href=url;a1.download='food-orders.csv';a1.click();URL.revokeObjectURL(url)};
+document.getElementById('print').onclick=()=>window.print();document.getElementById('clear').onclick=()=>{if(confirm('ยืนยันลบคำสั่งซื้อทั้งหมด?')){save([]);renderOrders()}};
+renderMenu();renderCart();renderOrders();
+</script></body></html>
